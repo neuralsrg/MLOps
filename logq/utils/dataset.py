@@ -4,6 +4,8 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 
+MAX_RATED_ITEMS = 10_000
+
 class SequenceDataset(Dataset):
     def __init__(self, input_file, padding_value, output_file=None, max_length=200 ):
         with open(input_file, 'r') as f:
@@ -29,10 +31,10 @@ class SequenceDataset(Dataset):
         elif len(inp) < self.max_length:
             inp = [self.padding_value] * (self.max_length - len(inp)) + inp
         
-        if len(rated) > 10_000:
+        if len(rated) > MAX_RATED_ITEMS:
             assert False
         else:
-            rated_padded = [self.padding_value] * (10_000 - len(rated)) + rated
+            rated_padded = [self.padding_value] * (MAX_RATED_ITEMS - len(rated)) + rated
 
         inp_tensor = torch.tensor(inp, dtype=torch.long)
         rated_tensor = torch.tensor(rated_padded, dtype=torch.long)
