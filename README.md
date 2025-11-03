@@ -24,6 +24,8 @@ For offline evaluation, we will adopt [MovieLens 1M Dataset](https://grouplens.o
 ## Target metrics
 Since logQ correction is only applied during training and does not affect inference latency, we measure only the model quality. Following common academic evaluation practices, our target metrics are Recall@20 and NDCG@20.
 
+Note that we measure NDCG@20 only for comparability with other works. The intended use of this retrieval model is candidate generation; hence, it's **business goal** is to retrieve as many positive candidates as possible to be ranked afterwards. From a business logic perspective, R@20 can be interpreted as a ratio of positives that the model succeeded to retrieve among top-20.
+
 
 ## Environment & Data 
 1. Create conda environment from `environment.yml` and install our code as a package. 
