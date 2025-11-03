@@ -5,9 +5,9 @@ Speaking of Sequential Recommendation, SasRec [1] is, perhaps, the first solutio
 
 Nevertheless, several studies [2, 3] argue that the loss used in the original SasRec is suboptimal for retrieval. Replacing it with a softmax loss substantially improves SasRec’s performance.
 
-However, at web scale the softmax loss is computationally infeasible: the denominator must sum over an excessively large set of negatives. In practice, this is addressed via sampled softmax, where negatives are drawn into the denominator in-batch. This induces a popularity bias: popular items appear more frequently in the denominator and are therefore over-penalized. To debias this effect, the log‑q correction [4] has been proposed, which applies importance sampling when drawing negatives.
+However, at web scale the softmax loss is computationally infeasible: the denominator must sum over an excessively large set of negatives. In practice, this is addressed via sampled softmax, where negatives are drawn into the denominator in-batch. This induces a popularity bias: popular items appear more frequently in the denominator and are therefore over-penalized. To debias this effect, the logQ correction [4] has been proposed, which applies importance sampling when drawing negatives.
 
-We identify an inaccuracy in the derivation of the conventional log‑q correction and propose a modified version [5].
+We identify an inaccuracy in the derivation of the conventional logQ correction and propose a modified version [5].
 
 
 ## Data
@@ -17,12 +17,12 @@ For offline evaluation, we will adopt [MovieLens 1M Dataset](https://grouplens.o
 ## Experimental plan
 1. Measure the performance of original SasRec.
 2. Replace the loss with a sampled softmax loss and assess whether performance improves.
-3. For popularity debiasing, add the log‑q correction and evaluate the resulting performance.
-4. Switch to the modified log‑q correction and assess how it changes performance.
+3. For popularity debiasing, add the logQ correction and evaluate the resulting performance.
+4. Switch to the modified logQ correction and assess how it changes performance.
 
 
 ## Target metrics
-Since logq-correction is only applied during training and does not affect inference latency, we measure only the model quality. Following common academic evaluation practices, our target metrics are Recall@20 and NDCG@20.
+Since logQ correction is only applied during training and does not affect inference latency, we measure only the model quality. Following common academic evaluation practices, our target metrics are Recall@20 and NDCG@20.
 
 
 ## Environment & Data 
@@ -38,7 +38,7 @@ python src/preprocess_ml1m.py
 
 
 ## Training models
-To train original SasRec, SasRec with sampled softmax, SasRec with sampled softmax and original logq debiasing, and SasRec with sampled softmax and proposed logq debiasing, use `train_sasrec.py`, `train_sasrec.py`, `train_in_batch_logq_old.py`, `train_in_batch_logq_new.py`, respectively.
+To train original SasRec, SasRec with sampled softmax, SasRec with sampled softmax and original logQ debiasing, and SasRec with sampled softmax and proposed logQ debiasing, use `train_sasrec.py`, `train_in_batch.py`, `train_in_batch_logq_old.py`, `train_in_batch_logq_new.py`, respectively.
 
 To run original SasRec, consider using `ml1m_sasrec.py` configuration file. For SasRec with sampled softmax, use `ml1m_other.py`. Correct configuration files are used as defaults for your convenience. 
 
@@ -47,14 +47,14 @@ For example, to run original SasRec on 6-th GPU, run this:
 python src/train_sasrec.py --device=6 --config=logq/configs/ml1m_sasrec.py  # or simply python src/train_sasrec.py --device=6
 ```
 
-To run SasRec with sampled softmax and original logq-correction, run this:
+To run SasRec with sampled softmax and original logQ correction, run this:
 ```
 python src/train_in_batch_logq_old.py --device=6 --config=logq/configs/ml1m_other.py  # or simply python src/train_in_batch_logq_old.py --device=6
 ```
 
 
 ## Evaluation
-To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logq-correction, one would run:
+To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logQ correction, one would run:
 ```
 python src/evaluate.py --config=logq/configs/ml1m_other.py --checkpoint=models/inbatch-logq-new-ml1m-step\:48-negs\:256-emb\:128-dropout\:0.5-metric\:0.023369326255676292.pt --device=6
 ```
