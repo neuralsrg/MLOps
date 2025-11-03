@@ -31,9 +31,7 @@ Since logQ correction is only applied during training and does not affect infere
 conda env create -f environment.yml
 python -m pip install -e .  # install logq as a package
 ```
-2. For your convenience, we have already preprocessed the data, which is now stored in `./ml1m` (recommended) You can safely use it as is and skip the rest of this section.
-
-If you wish to download and preprocess the data manually (not recommended), run
+2. For your convenience, we have already preprocessed the data, which is now stored in `./ml1m` (recommended). You can safely use it as is and skip the rest of this section. If you wish to download and preprocess the data manually (not recommended), run
 ```
 python src/preprocess_ml1m.py
 ```
