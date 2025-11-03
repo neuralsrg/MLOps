@@ -3,7 +3,5 @@ models
 .vscode
 __pycache__
 
-ml1m
-
 *.tar
 *.egg-info
