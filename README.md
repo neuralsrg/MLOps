@@ -37,6 +37,29 @@ python src/preprocess_ml1m.py
 ```
 
 
+## Training models
+To train original SasRec, SasRec with sampled softmax, SasRec with sampled softmax and original logq debiasing, and SasRec with sampled softmax and proposed logq debiasing, use `train_sasrec.py`, `train_sasrec.py`, `train_in_batch_logq_old.py`, `train_in_batch_logq_new.py`, respectively.
+
+To run original SasRec, consider using `ml1m_sasrec.py` configuration file. For SasRec with sampled softmax, use `ml1m_other.py`. Correct configuration files are used as defaults for your convenience. 
+
+For example, to run original SasRec on 6-th GPU, run this: 
+```
+python src/train_sasrec.py --device=6 --config=logq/configs/ml1m_sasrec.py  # or simply python src/train_sasrec.py --device=6
+```
+
+To run SasRec with sampled softmax and original logq-correction, run this:
+```
+python src/train_in_batch_logq_old.py --device=6 --config=logq/configs/ml1m_other.py  # or simply python src/train_in_batch_logq_old.py --device=6
+```
+
+
+## Evaluation
+To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logq-correction, one would run:
+```
+python src/evaluate.py --config=logq/configs/ml1m_other.py --checkpoint=models/inbatch-logq-new-ml1m-step\:48-negs\:256-emb\:128-dropout\:0.5-metric\:0.023369326255676292.pt --device=6
+```
+
+
 ## References
 1. [Self-Attentive Sequential Recommendation](https://arxiv.org/abs/1808.09781) (2018)
 2. [Turning Dross Into Gold Loss: is BERT4Rec really better than SASRec?](https://arxiv.org/abs/2309.07602) (2023)
