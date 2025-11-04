@@ -36,7 +36,7 @@ class SequenceDataset(Dataset):
         else:
             rated_padded = [self.padding_value] * (MAX_RATED_ITEMS - len(rated)) + rated
 
-        inp_tensor = torch.tensor(inp, dtype=torch.long)
+        inp_tensor = torch.tensor(inp, dtype=torch.long) + 10_000
         rated_tensor = torch.tensor(rated_padded, dtype=torch.long)
 
         if self.outputs:
