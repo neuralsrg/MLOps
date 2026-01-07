@@ -16,7 +16,7 @@ import numpy as np
 
 URL="https://raw.githubusercontent.com/asash/ml1m-sas-mapping/main/ml-1m_sas.txt"
 
-DATASET_DIR = Path(__file__).parent
+DATASET_DIR = Path(__file__).parent.parent/"ml1m"
 TRAIN_DIR = DATASET_DIR/"train"
 VAL_DIR = DATASET_DIR/"val"
 TEST_DIR = DATASET_DIR/"test"
