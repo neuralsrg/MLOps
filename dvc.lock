@@ -1,0 +1,33 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/preprocess_ml1m.py
+    deps:
+    - path: ml1m/ml-1m.txt
+      hash: md5
+      md5: f7699aece54d883579ea84535bacdda0
+      size: 9053831
+    - path: src/preprocess_ml1m.py
+      hash: md5
+      md5: 5493a4921d5a940cac65930132e8cf75
+      size: 4456
+    outs:
+    - path: ml1m/dataset_stats.json
+      hash: md5
+      md5: 1e32f6a8c633babe5c07ca99427534c3
+      size: 80
+    - path: ml1m/test
+      hash: md5
+      md5: 47cd5d0776a6556a8929a7466fda4fd4.dir
+      size: 4230954
+      nfiles: 2
+    - path: ml1m/train
+      hash: md5
+      md5: f2080d46bbb7abb3ac39e8225a03e029.dir
+      size: 4177265
+      nfiles: 1
+    - path: ml1m/val
+      hash: md5
+      md5: c1a01737a7975c324789c3a13289d2e2.dir
+      size: 359374
+      nfiles: 2
