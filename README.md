@@ -13,6 +13,14 @@ We identify an inaccuracy in the derivation of the conventional logQ correction 
 ## Data
 For offline evaluation, we will adopt [MovieLens 1M Dataset](https://grouplens.org/datasets/movielens/1m/).
 
+Dataset versioning is handled with [DVC](https://doc.dvc.org/start). [Google Drive](https://drive.google.com/drive/folders/1qQqgQGHHs_b5-ZrC2u3QAdYk28gBP7bN) is used as a remote data storage. Since August 2024 authorizing in gdrive with Python has become tricky, you have to follow this [tutorial](https://github.com/treeverse/dvc/issues/10516#issuecomment-2289652067) to pull data from Google Drive as well.
+
+After authorizing in Google Drive, follow these steps to pull the data:
+```
+dvc pull
+dvc repro
+```
+
 
 ## Experimental plan
 1. Measure the performance of original SasRec.
