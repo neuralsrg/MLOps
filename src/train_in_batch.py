@@ -1,4 +1,5 @@
 import os
+import shutil
 import logging
 from tqdm import tqdm
 from argparse import ArgumentParser
@@ -147,10 +148,14 @@ with mlflow.start_run() as run:
             if steps_not_improved >= config.early_stopping_patience:
                 logger.info(f"Stopping training, best model was saved to {best_model_name}")
                 break
+        
+    target_path = "models/inbatch-best.pt"
+    shutil.move(best_model_name, target_path)
+    logger.info(f"Moved model checkpoint from {best_model_name} to {target_path}")
 
-        if best_model_name is not None and os.path.exists(best_model_name):
-            mlflow.log_artifact(best_model_name, artifact_path="models")
-        if os.path.exists("dvc.lock"):
-            mlflow.log_artifact("dvc.lock")
-        if os.path.exists(args.config):
-            mlflow.log_artifact(args.config, artifact_path="configs")
+    if best_model_name is not None and os.path.exists(best_model_name):
+        mlflow.log_artifact(target_path, artifact_path="models")
+    if os.path.exists("dvc.lock"):
+        mlflow.log_artifact("dvc.lock")
+    if os.path.exists(args.config):
+        mlflow.log_artifact(args.config, artifact_path="configs")
