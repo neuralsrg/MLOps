@@ -6,7 +6,6 @@ stages:
     - src/preprocess_ml1m.py
     outs:
     - ml1m/dataset_stats.json
-    - ml1m/item_cnt.pkl
     - ml1m/test
     - ml1m/train
     - ml1m/val
