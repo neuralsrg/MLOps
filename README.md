@@ -83,7 +83,6 @@ sudo docker run --rm \
     ml-app:v1 \
     --config=logq/configs/ml1m_other.py \
     --checkpoint=models/inbatch-logq-new-best.pt \
-    --device=cpu \
     --input_path=/data/input.csv \
     --output_path=/data/output.csv \
     --top_k=5
