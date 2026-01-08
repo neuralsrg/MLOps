@@ -49,3 +49,12 @@ stages:
     - src/train_in_batch_logq_new.py
     outs:
     - models/inbatch-logq-new-ml1m-step:17184-negs:256-emb:128-dropout:0.5-metric:0.19111822481363075.pt
+  eval_new_logq:
+    cmd: python src/evaluate.py --config=logq/configs/ml1m_other.py 
+      --checkpoint=models/inbatch-logq-new-ml1m-step:17184-negs:256-emb:128-dropout:0.5-metric:0.19111822481363075.pt
+      --device=6
+    deps:
+    - logq/configs/ml1m_other.py
+    - ml1m/test
+    - models/inbatch-logq-new-ml1m-step:17184-negs:256-emb:128-dropout:0.5-metric:0.19111822481363075.pt
+    - src/evaluate.py
