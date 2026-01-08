@@ -64,6 +64,13 @@ python src/train_in_batch_logq_old.py --device=6 --config=logq/configs/ml1m_othe
 ```
 
 
+## Tracking experiments 
+Running training automatically creates Mlflow run. To see the results run:
+```
+mlflow server --port 5010
+```
+
+
 ## Evaluation
 To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logQ correction, one would run:
 ```

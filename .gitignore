@@ -2,6 +2,7 @@ legacy
 models
 .vscode
 __pycache__
+mlruns
 
 *.tar
 *.egg-info
