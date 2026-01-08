@@ -28,4 +28,13 @@ def evaluate(model: GSASRec, data_loader, metrics, limit, filter_rated, device):
                 pass
     result = ir_measures.calc_aggregate(metrics, qrels, scored_docs)
     return result
-    
+
+
+def predict(model: GSASRec, tensor_list: list[torch.Tensor], limit, device):
+    model.eval()
+    preds = []
+    with torch.no_grad():
+        for ids in tensor_list:
+            items, scores = model.get_predictions(ids.to(device).unsqueeze(0), limit)
+            preds.append(items.squeeze().cpu().tolist())
+    return preds
