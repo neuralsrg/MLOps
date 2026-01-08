@@ -12,7 +12,7 @@ class GSASRecExperimentConfig(object):
         metrics=[nDCG@10, R@1, R@10, nDCG@20, R@20],
         #  metrics=[nDCG@10, R@10, nDCG@20, R@20, nDCG@100, R@100, nDCG@1000, R@1000],
         val_metric = nDCG@10,
-        early_stopping_patience=200,
+        early_stopping_patience=60,
         gbce_t = 0.75,
         filter_rated=True,
         eval_batch_size=512,
