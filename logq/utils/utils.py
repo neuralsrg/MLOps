@@ -24,3 +24,11 @@ def get_device(gpu_id: int = 0):
     if torch.cuda.is_available():
         device=f"cuda:{gpu_id}"
     return device
+
+def csv_to_tensor_list(file_path):
+    tensor_list = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            integers = [int(x.strip()) for x in line.strip().split(',') if x.strip()]
+            tensor_list.append(torch.tensor(integers, dtype=torch.long))
+    return tensor_list
