@@ -18,7 +18,6 @@ Dataset versioning is handled with [DVC](https://doc.dvc.org/start). [Google Dri
 After authorizing in Google Drive, follow these steps to pull the data:
 ```
 dvc pull
-dvc repro
 ```
 
 
