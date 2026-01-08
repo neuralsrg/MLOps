@@ -70,17 +70,29 @@ mlflow server --port 5010
 ```
 
 
+## Evaluation
+To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logQ correction, one would run:
+```
+python src/evaluate.py --config=logq/configs/ml1m_other.py --checkpoint=models/inbatch-logq-new-ml1m-step\:48-negs\:256-emb\:128-dropout\:0.5-metric\:0.023369326255676292.pt --device=6
+```
+
+
 ## Run evaluation in Docker
 Build Docker image:
 ```
-sudo docker build -t ml-app:v1 .
+docker build -t ml-app:v1 .
+```
+
+Or pull it from [Dockerhub](https://hub.docker.com/r/neuralsrg/ml-app):
+```
+docker pull neuralsrg/ml-app:v1
 ```
 
 Run container:
 ```
 sudo docker run --rm \
     -v $(pwd)/csv:/data \
-    ml-app:v1 \
+    ml-app:v1 \  # OR neuralsrg/ml-app:v1
     --config=logq/configs/ml1m_other.py \
     --checkpoint=models/inbatch-logq-new-best.pt \
     --input_path=/data/input.csv \
@@ -91,13 +103,6 @@ sudo docker run --rm \
 Check predictions:
 ```
 head csv/output.csv
-```
-
-
-## Evaluation
-To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logQ correction, one would run:
-```
-python src/evaluate.py --config=logq/configs/ml1m_other.py --checkpoint=models/inbatch-logq-new-ml1m-step\:48-negs\:256-emb\:128-dropout\:0.5-metric\:0.023369326255676292.pt --device=6
 ```
 
 
