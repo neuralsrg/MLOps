@@ -31,3 +31,132 @@ stages:
       md5: c1a01737a7975c324789c3a13289d2e2.dir
       size: 359374
       nfiles: 2
+  train_sasrec:
+    cmd: python src/train_sasrec.py --device=6 
+      --config=logq/configs/ml1m_sasrec.py
+    deps:
+    - path: logq/configs/ml1m_sasrec.py
+      hash: md5
+      md5: bd8a122bb8208adb6b05e4f8e1897f73
+      size: 325
+    - path: ml1m/train
+      hash: md5
+      md5: f2080d46bbb7abb3ac39e8225a03e029.dir
+      size: 4177265
+      nfiles: 1
+    - path: ml1m/val
+      hash: md5
+      md5: c1a01737a7975c324789c3a13289d2e2.dir
+      size: 359374
+      nfiles: 2
+    - path: src/train_sasrec.py
+      hash: md5
+      md5: 9d410fc2367380fd3b0dea99c57076cb
+      size: 5863
+    outs:
+    - path: models/sasrec-best.pt
+      hash: md5
+      md5: 68698eca9c8be7da7a156207418a806b
+      size: 4283787
+  train_inbatch:
+    cmd: python src/train_in_batch.py --device=6 
+      --config=logq/configs/ml1m_other.py
+    deps:
+    - path: logq/configs/ml1m_other.py
+      hash: md5
+      md5: c6c5ad53014c38bbe2c10297a5a1063d
+      size: 315
+    - path: ml1m/train
+      hash: md5
+      md5: f2080d46bbb7abb3ac39e8225a03e029.dir
+      size: 4177265
+      nfiles: 1
+    - path: ml1m/val
+      hash: md5
+      md5: c1a01737a7975c324789c3a13289d2e2.dir
+      size: 359374
+      nfiles: 2
+    - path: src/train_in_batch.py
+      hash: md5
+      md5: 9fa6463866239f2fe38340554d0bf166
+      size: 6513
+    outs:
+    - path: models/inbatch-best.pt
+      hash: md5
+      md5: 48d677ade852f710302263d0f8e49f37
+      size: 4286289
+  train_inbatch_logq_old:
+    cmd: python src/train_in_batch_logq_old.py --device=6 
+      --config=logq/configs/ml1m_other.py
+    deps:
+    - path: logq/configs/ml1m_other.py
+      hash: md5
+      md5: c6c5ad53014c38bbe2c10297a5a1063d
+      size: 315
+    - path: ml1m/train
+      hash: md5
+      md5: f2080d46bbb7abb3ac39e8225a03e029.dir
+      size: 4177265
+      nfiles: 1
+    - path: ml1m/val
+      hash: md5
+      md5: c1a01737a7975c324789c3a13289d2e2.dir
+      size: 359374
+      nfiles: 2
+    - path: src/train_in_batch_logq_old.py
+      hash: md5
+      md5: 50b8dbb4038915074411f855e2792594
+      size: 7052
+    outs:
+    - path: models/inbatch-logq-old-best.pt
+      hash: md5
+      md5: 1b5cc6e044fc69b51f7caeebb0e9f3de
+      size: 4286704
+  train_inbatch_logq_new:
+    cmd: python src/train_in_batch_logq_new.py --device=6 
+      --config=logq/configs/ml1m_other.py
+    deps:
+    - path: logq/configs/ml1m_other.py
+      hash: md5
+      md5: c6c5ad53014c38bbe2c10297a5a1063d
+      size: 315
+    - path: ml1m/train
+      hash: md5
+      md5: f2080d46bbb7abb3ac39e8225a03e029.dir
+      size: 4177265
+      nfiles: 1
+    - path: ml1m/val
+      hash: md5
+      md5: c1a01737a7975c324789c3a13289d2e2.dir
+      size: 359374
+      nfiles: 2
+    - path: src/train_in_batch_logq_new.py
+      hash: md5
+      md5: c96a7fbda88a36463abe56052a8dc85f
+      size: 7759
+    outs:
+    - path: models/inbatch-logq-new-best.pt
+      hash: md5
+      md5: 54775639fd10ee2ee1a19a8c119fc324
+      size: 4286704
+  eval_new_logq:
+    cmd: python src/evaluate.py --config=logq/configs/ml1m_other.py 
+      --checkpoint=models/inbatch-logq-new-best.pt --device=6
+    deps:
+    - path: logq/configs/ml1m_other.py
+      hash: md5
+      md5: c6c5ad53014c38bbe2c10297a5a1063d
+      size: 315
+    - path: ml1m/test
+      hash: md5
+      md5: 47cd5d0776a6556a8929a7466fda4fd4.dir
+      size: 4230954
+      nfiles: 2
+    - path: models/inbatch-logq-new-best.pt
+      hash: md5
+      md5: 54775639fd10ee2ee1a19a8c119fc324
+      size: 4286704
+    - path: src/evaluate.py
+      hash: md5
+      md5: e2ca3e9e6b978d624d417cde66f77ad1
+      size: 1225

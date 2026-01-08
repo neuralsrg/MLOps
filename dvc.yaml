@@ -18,7 +18,7 @@ stages:
     - ml1m/val
     - src/train_sasrec.py
     outs:
-    - models/sasrec-ml1m-step:2496-emb:128-dropout:0.5-metric:0.1424491927360601.pt
+    - models/sasrec-best.pt
   train_inbatch:
     cmd: python src/train_in_batch.py --device=6 
       --config=logq/configs/ml1m_other.py
@@ -28,7 +28,7 @@ stages:
     - ml1m/val
     - src/train_in_batch.py
     outs:
-    - models/inbatch-ml1m-step:2160-negs:256-emb:128-dropout:0.5-metric:0.17746228301182293.pt
+    - models/inbatch-best.pt
   train_inbatch_logq_old:
     cmd: python src/train_in_batch_logq_old.py --device=6 
       --config=logq/configs/ml1m_other.py
@@ -38,7 +38,7 @@ stages:
     - ml1m/val
     - src/train_in_batch_logq_old.py
     outs:
-    - models/inbatch-logq-old-ml1m-step:11424-negs:256-emb:128-dropout:0.5-metric:0.18484549090367997.pt
+    - models/inbatch-logq-old-best.pt
   train_inbatch_logq_new:
     cmd: python src/train_in_batch_logq_new.py --device=6 
       --config=logq/configs/ml1m_other.py
@@ -48,13 +48,13 @@ stages:
     - ml1m/val
     - src/train_in_batch_logq_new.py
     outs:
-    - models/inbatch-logq-new-ml1m-step:17184-negs:256-emb:128-dropout:0.5-metric:0.19111822481363075.pt
+    - models/inbatch-logq-new-best.pt
   eval_new_logq:
     cmd: python src/evaluate.py --config=logq/configs/ml1m_other.py 
-      --checkpoint=models/inbatch-logq-new-ml1m-step:17184-negs:256-emb:128-dropout:0.5-metric:0.19111822481363075.pt
+      --checkpoint=models/inbatch-logq-new-best.pt
       --device=6
     deps:
     - logq/configs/ml1m_other.py
     - ml1m/test
-    - models/inbatch-logq-new-ml1m-step:17184-negs:256-emb:128-dropout:0.5-metric:0.19111822481363075.pt
+    - models/inbatch-logq-new-best.pt
     - src/evaluate.py
