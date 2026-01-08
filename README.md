@@ -70,6 +70,31 @@ mlflow server --port 5010
 ```
 
 
+## Run evaluation in Docker
+Build Docker image:
+```
+sudo docker build -t ml-app:v1 .
+```
+
+Run container:
+```
+sudo docker run --rm \
+    -v $(pwd)/csv:/data \
+    ml-app:v1 \
+    --config=logq/configs/ml1m_other.py \
+    --checkpoint=models/inbatch-logq-new-best.pt \
+    --device=cpu \
+    --input_path=/data/input.csv \
+    --output_path=/data/output.csv \
+    --top_k=5
+```
+
+Check predictions:
+```
+head csv/output.csv
+```
+
+
 ## Evaluation
 To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logQ correction, one would run:
 ```
