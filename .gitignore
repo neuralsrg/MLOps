@@ -5,6 +5,7 @@ __pycache__
 mlruns
 
 *.tar
+*.mar
 *.egg-info
 
 test.ipynb
