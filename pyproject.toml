@@ -7,7 +7,7 @@ name = "logq"
 version = "0.1.0"
 description = "LogQ project"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 
 [tool.setuptools]
 packages = ["logq"]
