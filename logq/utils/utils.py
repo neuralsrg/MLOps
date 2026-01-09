@@ -13,8 +13,8 @@ def load_config(config_file: str) -> GSASRecExperimentConfig:
     spec.loader.exec_module(config_module)
     return config_module.config
 
-def build_model(config: GSASRecExperimentConfig):
-    num_items = get_num_items(config.dataset_name) 
+def build_model(config: GSASRecExperimentConfig, dataset_stats_path=None):
+    num_items = get_num_items(config.dataset_name, path=dataset_stats_path)
     model = GSASRec(num_items, sequence_length=config.sequence_length, embedding_dim=config.embedding_dim,
                     num_heads=config.num_heads, num_blocks=config.num_blocks, dropout_rate=config.dropout_rate)
     return model
