@@ -90,7 +90,7 @@ docker pull neuralsrg/ml-app:v1
 
 Run container:
 ```
-sudo docker run --rm \
+docker run --rm \
     -v $(pwd)/csv:/data \
     ml-app:v1 \  # OR neuralsrg/ml-app:v1
     --config=logq/configs/ml1m_other.py \
@@ -103,6 +103,45 @@ sudo docker run --rm \
 Check predictions:
 ```
 head csv/output.csv
+```
+
+
+## Torchserve inference 
+
+Archive inputs:
+```
+mkdir torchserve/model-store && \
+torch-model-archiver \
+    --model-name archive \
+    --version 1.0 \
+    --serialized-file models/sasrec-best.pt \
+    --handler torchserve/handler.py \
+    --extra-files "logq/configs/ml1m_sasrec.py,logq/configs/ml1m_other.py,ml1m/dataset_stats.json,ml1m/item_cnt.pkl,models/inbatch-best.pt,models/inbatch-logq-old-best.pt,models/inbatch-logq-new-best.pt" \
+    --export-path torchserve/model-store \
+    --force
+```
+
+Build docker image:
+```
+docker build -f torchserve/Dockerfile -t mymodel-serve:v1 .
+```
+
+Run docker container:
+```
+docker run -d -p 8070:8080 -p 8071:8081 mymodel-serve:v1
+```
+
+Send POST request and get output:
+```
+curl -X \
+    POST http://localhost:8070/predictions/model \
+    -H "Content-Type: application/json" \
+    --data-binary @json/input.json
+```
+
+To stop running container:
+```
+docker stop <CONTAINER ID>
 ```
 
 
