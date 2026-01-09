@@ -10,17 +10,6 @@ However, at web scale the softmax loss is computationally infeasible: the denomi
 We identify an inaccuracy in the derivation of the conventional logQ correction and propose a modified version [5].
 
 
-## Data
-For offline evaluation, we will adopt [MovieLens 1M Dataset](https://grouplens.org/datasets/movielens/1m/).
-
-Dataset versioning is handled with [DVC](https://doc.dvc.org/start). [Google Drive](https://drive.google.com/drive/folders/1qQqgQGHHs_b5-ZrC2u3QAdYk28gBP7bN) is used as a remote data storage. Since August 2024 authorizing in gdrive with Python has become tricky, you have to follow this [tutorial](https://github.com/treeverse/dvc/issues/10516#issuecomment-2289652067) to pull data from Google Drive as well.
-
-After authorizing in Google Drive, follow these steps to pull the data:
-```
-dvc pull
-```
-
-
 ## Experimental plan
 1. Measure the performance of original SasRec.
 2. Replace the loss with a sampled softmax loss and assess whether performance improves.
@@ -34,17 +23,35 @@ Since logQ correction is only applied during training and does not affect infere
 Note that we measure NDCG@20 only for comparability with other works. The intended use of this retrieval model is candidate generation; hence, it's **business goal** is to retrieve as many positive candidates as possible to be ranked afterwards. From a business logic perspective, R@20 can be interpreted as a ratio of positives that the model succeeded to retrieve among top-20.
 
 
-## Environment & Data 
+## Environment
 1. Create conda environment from `environment.yml` and install our code as a package. 
 ```
 conda env create -f environment.yml
 python -m pip install -e .  # install logq as a package
 ```
-2. For your convenience, we have already preprocessed the data, which is now stored in `./ml1m` (recommended). You can safely use it as is and skip the rest of this section. If you wish to download and preprocess the data manually (not recommended), run
+
+
+## Data
+For offline evaluation, we will adopt [MovieLens 1M Dataset](https://grouplens.org/datasets/movielens/1m/).
+
+Dataset versioning is handled with [DVC](https://doc.dvc.org/start). [Google Drive](https://drive.google.com/drive/folders/1qQqgQGHHs_b5-ZrC2u3QAdYk28gBP7bN) is used as a remote data storage. Since August 2024 authorizing in gdrive with Python has become tricky, you have to follow this [tutorial](https://github.com/treeverse/dvc/issues/10516#issuecomment-2289652067) to pull data from Google Drive as well as to push it.
+
+Following the instruction above, obtain `gdrive_client_id` and `gdrive_client_secret` and store them in `.dvc/config.local`:
 ```
-python src/preprocess_ml1m.py
+['remote "storage"']
+    gdrive_client_id = <YOUR CLIENT ID>
+    gdrive_client_secret = <YOUR SECRET>
 ```
-After that, move the ML1M dataset to `./ml1m`.
+
+After authorizing in Google Drive, pull the data:
+```
+dvc pull
+```
+
+To ensure data and checkpoints are up to date, run:
+```
+dvc repro
+```
 
 
 ## Training models
