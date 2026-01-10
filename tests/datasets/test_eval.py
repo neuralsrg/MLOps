@@ -2,7 +2,7 @@ import pytest
 
 import torch
 
-from logq.utils.utils import load_config
+from logq.utils.utils import load_config, dataset_available
 from logq.utils.dataset import get_val_dataloader, get_test_dataloader, get_num_items, MAX_RATED_ITEMS
 
 
@@ -20,6 +20,10 @@ def eval_dataloader(request):
     )
     return eval_dataloader, config
 
+@pytest.mark.skipif(
+    not dataset_available("val"),
+    reason="Dataset not available"
+)
 def test_eval_dataloader(eval_dataloader):
     eval_dataloader, config = eval_dataloader
     batch = next(iter(eval_dataloader))

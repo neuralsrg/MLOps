@@ -1,3 +1,4 @@
+import os
 import importlib
 
 import torch
@@ -32,3 +33,6 @@ def csv_to_tensor_list(file_path):
             integers = [int(x.strip()) for x in line.strip().split(',') if x.strip()]
             tensor_list.append(torch.tensor(integers, dtype=torch.long))
     return tensor_list
+
+def dataset_available(dataset_name: str) -> bool:
+    return os.path.exists(f"ml1m/{dataset_name}")

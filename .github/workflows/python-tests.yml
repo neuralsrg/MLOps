@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - task1
+      - task2
   pull_request:
     branches:
       - '*'

@@ -3,8 +3,8 @@ import pytest
 import torch
 
 from logq.utils.eval import evaluate
-from logq.utils.utils import load_config, build_model, get_device
 from logq.utils.dataset import get_test_dataloader, get_num_items
+from logq.utils.utils import load_config, build_model, get_device, dataset_available
 
 
 @pytest.fixture(params=[{'cfg_path': 'logq/configs/ml1m_sasrec.py'},
@@ -14,6 +14,10 @@ def config(request):
     config = load_config(params['cfg_path'])
     return config
 
+@pytest.mark.skipif(
+    not dataset_available("test"),
+    reason="Dataset not available"
+)
 def test_model_outputs(config):
     device = get_device()
     num_items = get_num_items(config.dataset_name)
