@@ -1,0 +1,16 @@
+__pycache__
+.dvc
+.github
+.pytest_cache
+csv
+legacy
+logq.egg-info
+mlruns
+tests
+
+.dvcignore
+.gitignore
+dvc.lock
+dvc.yaml
+environment.yml
+README.md

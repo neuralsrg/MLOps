@@ -57,8 +57,10 @@ def collate_val_test(input_batch):
     output = torch.stack([input_batch[i][2] for i in range(len(input_batch))], dim=0)
     return [input, rated, output]
 
-def get_num_items(dataset):
-    with open(f"{dataset}/dataset_stats.json", 'r') as f:
+def get_num_items(dataset, path=None):
+    if path is None:
+        path = f"{dataset}/dataset_stats.json" 
+    with open(path, 'r') as f:
         stats = json.load(f)
     return stats['num_items']
 

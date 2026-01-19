@@ -2,7 +2,7 @@ import pytest
 
 import torch
 
-from logq.utils.utils import load_config
+from logq.utils.utils import load_config, dataset_available
 from logq.utils.dataset import get_train_dataloader, get_num_items
 
 
@@ -19,6 +19,10 @@ def train_dataloader(request):
     )
     return train_dataloader, config
 
+@pytest.mark.skipif(
+    not dataset_available("train"),
+    reason="Dataset not available"
+)
 def test_train_dataloader(train_dataloader):
     train_dataloader, config = train_dataloader
     batch = next(iter(train_dataloader))

@@ -1,0 +1,60 @@
+stages:
+  prepare:
+    cmd: python src/preprocess_ml1m.py
+    deps:
+    - ml1m/ml-1m.txt
+    - src/preprocess_ml1m.py
+    outs:
+    - ml1m/dataset_stats.json
+    - ml1m/test
+    - ml1m/train
+    - ml1m/val
+  train_sasrec:
+    cmd: python src/train_sasrec.py --device=6 
+      --config=logq/configs/ml1m_sasrec.py
+    deps:
+    - logq/configs/ml1m_sasrec.py
+    - ml1m/train
+    - ml1m/val
+    - src/train_sasrec.py
+    outs:
+    - models/sasrec-best.pt
+  train_inbatch:
+    cmd: python src/train_in_batch.py --device=6 
+      --config=logq/configs/ml1m_other.py
+    deps:
+    - logq/configs/ml1m_other.py
+    - ml1m/train
+    - ml1m/val
+    - src/train_in_batch.py
+    outs:
+    - models/inbatch-best.pt
+  train_inbatch_logq_old:
+    cmd: python src/train_in_batch_logq_old.py --device=6 
+      --config=logq/configs/ml1m_other.py
+    deps:
+    - logq/configs/ml1m_other.py
+    - ml1m/train
+    - ml1m/val
+    - src/train_in_batch_logq_old.py
+    outs:
+    - models/inbatch-logq-old-best.pt
+  train_inbatch_logq_new:
+    cmd: python src/train_in_batch_logq_new.py --device=6 
+      --config=logq/configs/ml1m_other.py
+    deps:
+    - logq/configs/ml1m_other.py
+    - ml1m/train
+    - ml1m/val
+    - src/train_in_batch_logq_new.py
+    outs:
+    - models/inbatch-logq-new-best.pt
+  eval_new_logq:
+    cmd: python src/evaluate.py --config=logq/configs/ml1m_other.py 
+      --checkpoint=models/inbatch-logq-new-best.pt
+      --device=6
+    deps:
+    - logq/configs/ml1m_other.py
+    - ml1m/test
+    - models/inbatch-logq-new-best.pt
+    - src/evaluate.py

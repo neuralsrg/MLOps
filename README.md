@@ -10,10 +10,6 @@ However, at web scale the softmax loss is computationally infeasible: the denomi
 We identify an inaccuracy in the derivation of the conventional logQ correction and propose a modified version [5].
 
 
-## Data
-For offline evaluation, we will adopt [MovieLens 1M Dataset](https://grouplens.org/datasets/movielens/1m/).
-
-
 ## Experimental plan
 1. Measure the performance of original SasRec.
 2. Replace the loss with a sampled softmax loss and assess whether performance improves.
@@ -27,17 +23,35 @@ Since logQ correction is only applied during training and does not affect infere
 Note that we measure NDCG@20 only for comparability with other works. The intended use of this retrieval model is candidate generation; hence, it's **business goal** is to retrieve as many positive candidates as possible to be ranked afterwards. From a business logic perspective, R@20 can be interpreted as a ratio of positives that the model succeeded to retrieve among top-20.
 
 
-## Environment & Data 
+## Environment
 1. Create conda environment from `environment.yml` and install our code as a package. 
 ```
 conda env create -f environment.yml
 python -m pip install -e .  # install logq as a package
 ```
-2. For your convenience, we have already preprocessed the data, which is now stored in `./ml1m` (recommended). You can safely use it as is and skip the rest of this section. If you wish to download and preprocess the data manually (not recommended), run
+
+
+## Data
+For offline evaluation, we will adopt [MovieLens 1M Dataset](https://grouplens.org/datasets/movielens/1m/).
+
+Dataset versioning is handled with [DVC](https://doc.dvc.org/start). [Google Drive](https://drive.google.com/drive/folders/1qQqgQGHHs_b5-ZrC2u3QAdYk28gBP7bN) is used as a remote data storage. Since August 2024 authorizing in gdrive with Python has become tricky, you have to follow this [tutorial](https://github.com/treeverse/dvc/issues/10516#issuecomment-2289652067) to pull data from Google Drive as well as to push it.
+
+Following the instruction above, obtain `gdrive_client_id` and `gdrive_client_secret` and store them in `.dvc/config.local`:
 ```
-python src/preprocess_ml1m.py
+['remote "storage"']
+    gdrive_client_id = <YOUR CLIENT ID>
+    gdrive_client_secret = <YOUR SECRET>
 ```
-After that, move the ML1M dataset to `./ml1m`.
+
+After authorizing in Google Drive, pull the data:
+```
+dvc pull
+```
+
+To ensure data and checkpoints are up to date, run:
+```
+dvc repro
+```
 
 
 ## Training models
@@ -47,19 +61,108 @@ To run original SasRec, consider using `ml1m_sasrec.py` configuration file. For 
 
 For example, to run original SasRec on 6-th GPU, run this: 
 ```
-python src/train_sasrec.py --device=6 --config=logq/configs/ml1m_sasrec.py  # or simply python src/train_sasrec.py --device=6
+python src/train_sasrec.py \
+    --device=6
+    --config=logq/configs/ml1m_sasrec.py
+# or simply python src/train_sasrec.py --device=6
 ```
 
 To run SasRec with sampled softmax and original logQ correction, run this:
 ```
-python src/train_in_batch_logq_old.py --device=6 --config=logq/configs/ml1m_other.py  # or simply python src/train_in_batch_logq_old.py --device=6
+python src/train_in_batch_logq_old.py \
+    --device=6 \
+    --config=logq/configs/ml1m_other.py
+# or simply python src/train_in_batch_logq_old.py --device=6
+```
+
+
+## Tracking experiments 
+Running training automatically creates Mlflow run. To see the results run:
+```
+mlflow server --port 5010
 ```
 
 
 ## Evaluation
 To evaluate model checkpoint, run `evaluate.py` with the same configuration file used for training. For example, to evaluate SasRec with sampled softmax loss and proposed logQ correction, one would run:
 ```
-python src/evaluate.py --config=logq/configs/ml1m_other.py --checkpoint=models/inbatch-logq-new-ml1m-step\:48-negs\:256-emb\:128-dropout\:0.5-metric\:0.023369326255676292.pt --device=6
+python src/evaluate.py \
+    --config=logq/configs/ml1m_other.py \
+    --checkpoint=models/inbatch-logq-new-best.pt \
+    --device=6
+```
+
+
+## Run evaluation in Docker
+Build Docker image:
+```
+docker build -t ml-app:v1 .
+```
+
+Or pull it from [Dockerhub](https://hub.docker.com/r/neuralsrg/ml-app):
+```
+docker pull neuralsrg/ml-app:v1
+```
+
+Run container:
+```
+docker run --rm \
+    -v $(pwd)/csv:/data \
+    ml-app:v1 \  # OR neuralsrg/ml-app:v1
+    --config=logq/configs/ml1m_other.py \
+    --checkpoint=models/inbatch-logq-new-best.pt \
+    --input_path=/data/input.csv \
+    --output_path=/data/output.csv \
+    --top_k=5
+```
+
+Check predictions:
+```
+head csv/output.csv
+```
+
+
+## Torchserve inference 
+
+Archive inputs:
+```
+mkdir torchserve/model-store && \
+torch-model-archiver \
+    --model-name archive \
+    --version 1.0 \
+    --serialized-file models/sasrec-best.pt \
+    --handler torchserve/handler.py \
+    --extra-files "logq/configs/ml1m_sasrec.py,logq/configs/ml1m_other.py,ml1m/dataset_stats.json,ml1m/item_cnt.pkl,models/inbatch-best.pt,models/inbatch-logq-old-best.pt,models/inbatch-logq-new-best.pt" \
+    --export-path torchserve/model-store \
+    --force
+```
+
+Build docker image:
+```
+docker build -f torchserve/Dockerfile -t mymodel-serve:v1 .
+```
+
+Or pull it from [Dockerhub](https://hub.docker.com/r/neuralsrg/torchserve):
+```
+docker pull neuralsrg/torchserve:v1
+```
+
+Run docker container:
+```
+docker run -d -p 8070:8080 -p 8071:8081 mymodel-serve:v1  # or neuralsrg/torchserve:v1
+```
+
+Send POST request and get output:
+```
+curl -X \
+    POST http://localhost:8070/predictions/model \
+    -H "Content-Type: application/json" \
+    --data-binary @json/input.json
+```
+
+To stop running container:
+```
+docker stop <CONTAINER ID>
 ```
 
 
