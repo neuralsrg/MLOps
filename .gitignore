@@ -1,0 +1,11 @@
+legacy
+models
+.vscode
+__pycache__
+mlruns
+
+*.tar
+*.mar
+*.egg-info
+
+test.ipynb

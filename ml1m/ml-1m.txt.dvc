@@ -1,0 +1,5 @@
+outs:
+- md5: f7699aece54d883579ea84535bacdda0
+  size: 9053831
+  hash: md5
+  path: ml-1m.txt

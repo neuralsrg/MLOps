@@ -1,0 +1,5 @@
+outs:
+- md5: 1daa53023737dc78db7d5937cd93d3b1
+  size: 8050
+  hash: md5
+  path: item_cnt.pkl
